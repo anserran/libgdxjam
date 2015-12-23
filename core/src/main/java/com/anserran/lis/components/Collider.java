@@ -18,6 +18,7 @@ public class Collider implements Component {
     private static final Rectangle rect2 = new Rectangle();
 
     public boolean circle = false;
+    public boolean dynamic = true;
 
     public Vector2 pos = new Vector2();
 
@@ -29,8 +30,7 @@ public class Collider implements Component {
 
     public Collider(float x, float y, float width, float height) {
         pos.set(x, y);
-        size.set(width, height);
-        this.circle = false;
+        setSize(width, height);
     }
 
     public Collider(float x, float y, float radius) {
@@ -42,6 +42,11 @@ public class Collider implements Component {
         circle = true;
         size.x = radius;
         size.y = radius;
+    }
+
+    public void setSize(float width, float height) {
+        size.set(width, height);
+        this.circle = false;
     }
 
     public boolean intersects(Collider collider) {

@@ -1,7 +1,10 @@
 package com.anserran.lis.systems;
 
 import com.anserran.lis.components.Collider;
-import com.anserran.lis.components.Renderer;
+import com.anserran.lis.components.Origin;
+import com.anserran.lis.components.Position;
+import com.anserran.lis.components.Velocity;
+import com.anserran.lis.components.commands.Interpolate;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -28,18 +31,19 @@ public class CollisionSystem extends EntitySystem implements Mappers {
 
     @Override
     public void addedToEngine(Engine engine) {
-        entities = engine.getEntitiesFor(Family.all(Collider.class, Renderer.class).get());
+        entities = engine.getEntitiesFor(Family.all(Collider.class, Position.class).get());
     }
 
     @Override
     public void update(float deltaTime) {
         for (Entity entity : entities) {
-            Renderer r = renderer.get(entity);
+            Position p = position.get(entity);
             Collider c = collider.get(entity);
 
-            c.pos.set(r.getX(), r.getY());
-            if (c.circle) {
-                c.pos.add(r.getOriginX(), r.getOriginY());
+            c.pos.set(p.x, p.y);
+            if (c.circle && origin.has(entity)) {
+                Origin o = origin.get(entity);
+                c.pos.add(o.x, o.y);
             }
         }
 
@@ -53,11 +57,13 @@ public class CollisionSystem extends EntitySystem implements Mappers {
             for (int j = i + 1; j < entities.size(); j++) {
                 Entity e2 = entities.get(j);
                 Collider c2 = collider.get(e2);
-                if (c1.intersects(c2)) {
-                    String collisionId = e1.toString().compareTo(e2.toString()) > 0 ? e1.toString() + e2.toString() : e2.toString() + e1.toString();
-                    if (!endedCollisions.removeValue(collisionId, false)) {
-                        startedCollissions.put(collisionId, dataPool.get(e1, e2));
-                        collisionStarted(e1, e2);
+                if (c1.dynamic || c2.dynamic) {
+                    if (c1.intersects(c2)) {
+                        String collisionId = e1.toString().compareTo(e2.toString()) > 0 ? e1.toString() + e2.toString() : e2.toString() + e1.toString();
+                        if (!endedCollisions.removeValue(collisionId, false)) {
+                            startedCollissions.put(collisionId, dataPool.get(e1, e2));
+                            collisionStarted(e1, e2);
+                        }
                     }
                 }
             }
@@ -76,6 +82,19 @@ public class CollisionSystem extends EntitySystem implements Mappers {
     }
 
     private void collisionStarted(Entity e1, Entity e2) {
+        if (velocity.has(e1)){
+            e1.remove(Velocity.class);
+        }
+        if (velocity.has(e2)){
+            e2.remove(Velocity.class);
+        }
+
+        if (interpolate.has(e1)){
+            e1.remove(Interpolate.class);
+        }
+        if (interpolate.has(e2)){
+            e2.remove(Interpolate.class);
+        }
         System.out.println("Collision started");
     }
 
