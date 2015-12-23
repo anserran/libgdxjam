@@ -1,0 +1,23 @@
+{
+  "width": 16,
+  "height": 11,
+  "entities": [
+    {
+      "components": [
+        {
+          "class": "position",
+          "x": 0,
+          "y": 2
+        },
+        {
+          "class": "collider",
+          "size": {
+            "x": 1,
+            "y": 6
+          },
+          "circle": false
+        }
+      ]
+    }
+  ]
+}

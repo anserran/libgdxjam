@@ -88,6 +88,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         testCompile 'junit:junit:4.12'
+        testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
     }
 }
 
