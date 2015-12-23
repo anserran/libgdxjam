@@ -1,11 +1,19 @@
 package com.anserran.lis.components;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.utils.Pool.Poolable;
 
-/**
- * Created by bender on 22/12/15.
- */
-public class AngularVelocity implements Component {
+public class AngularVelocity implements Component, Value, Poolable {
 
-    public float v;
+    public float value;
+
+    @Override
+    public void addValue(float value) {
+        this.value += value;
+    }
+
+    @Override
+    public void reset() {
+        value = 0;
+    }
 }
