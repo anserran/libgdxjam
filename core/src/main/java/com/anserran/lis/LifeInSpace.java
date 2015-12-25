@@ -26,76 +26,93 @@ import com.badlogic.gdx.utils.ObjectMap.Entry;
 
 public class LifeInSpace extends ApplicationAdapter {
 
-    private PooledEngine engine;
-    private RenderSystem renderSystem;
-    private LevelLoader loader;
-    private ImmutableArray<Entity> tagged;
-    private Data data;
+	private PooledEngine engine;
+	private RenderSystem renderSystem;
+	private LevelLoader loader;
+	private ImmutableArray<Entity> tagged;
+	private Data data;
 
-    public Data getData() {
-        return data;
-    }
+	public int updates = 1;
 
-    @Override
-    public void create() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        engine = new PooledEngine();
-        data = new Data(engine);
+	public Data getData() {
+		return data;
+	}
 
-        engine.addSystem(new VelocitySystem());
-        engine.addSystem(new AngularVelocitySystem());
-        engine.addSystem(new CollisionSystem());
-        engine.addSystem(new InterpolationSystem());
-        engine.addSystem(new CommandsSystem());
-        engine.addSystem((CollidersRenderSystem) (renderSystem = new CollidersRenderSystem()));
-        this.loader = new LevelLoader(engine);
+	@Override
+	public void create() {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		engine = new PooledEngine();
+		data = new Data(engine);
 
-        tagged = engine.getEntitiesFor(Family.all(Tags.class).get());
+		Utils.engine = engine;
 
-        Gdx.input.setInputProcessor(new KeyboardInputProcessor(this));
-        loadLevel("1");
-    }
+		engine.addSystem(new VelocitySystem());
+		engine.addSystem(new AngularVelocitySystem());
+		engine.addSystem(new CollisionSystem(this));
+		engine.addSystem(new InterpolationSystem());
+		engine.addSystem(new CommandsSystem());
+		engine.addSystem((CollidersRenderSystem) (renderSystem = new CollidersRenderSystem()));
+		this.loader = new LevelLoader(engine);
 
-    @Override
-    public void render() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1.0f / 33f);
-        engine.update(delta);
-    }
+		tagged = engine.getEntitiesFor(Family.all(Tags.class).get());
 
-    @Override
-    public void resize(int width, int height) {
-        renderSystem.resize(width, height);
-    }
+		Gdx.input.setInputProcessor(new KeyboardInputProcessor(this));
+		loadLevel("1");
+	}
 
-    public void loadLevel(String levelId) {
-        engine.removeAllEntities();
-        LevelData levelData = loader.load(levelId);
-        renderSystem.setGridSize(levelData.width, levelData.height);
-        for (EntityData entityData : levelData.entities) {
-            Entity entity = engine.createEntity();
-            if (entityData.id != null) {
-                Tags tags = engine.createComponent(Tags.class);
-                tags.add(entityData.id);
-                entity.add(tags);
-            }
-            for (Component component : entityData.components) {
-                entity.add(component);
-            }
-            engine.addEntity(entity);
-        }
-    }
+	@Override
+	public void render() {
+		float delta = Math.min(Gdx.graphics.getDeltaTime(), 1.0f / 33f);
+		for (int i = 0; i < updates; i++) {
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			engine.update(delta);
+		}
+	}
 
-    public void run() {
-        for (Entry<String, Commands> e : data.getCommandsMap().entries()) {
-            for (Entity entity : tagged) {
-                Tags tags = Mappers.tags.get(entity);
-                if (tags.contains(e.key, false)) {
-                    entity.add(e.value);
-                    break;
-                }
-            }
-        }
-        data.getCommandsMap().clear();
-    }
+	@Override
+	public void resize(int width, int height) {
+		renderSystem.resize(width, height);
+	}
+
+	public void loadLevel(String levelId) {
+		engine.removeAllEntities();
+		LevelData levelData = loader.load(levelId);
+		renderSystem.setGridSize(levelData.width, levelData.height);
+		for (EntityData entityData : levelData.entities) {
+			Entity entity = engine.createEntity();
+			if (entityData.id != null) {
+				Tags tags = engine.createComponent(Tags.class);
+				tags.add(entityData.id);
+				entity.add(tags);
+			}
+			for (Component component : entityData.components) {
+				entity.add(component);
+			}
+			engine.addEntity(entity);
+		}
+	}
+
+	public void run() {
+		for (Entry<String, Commands> e : data.getCommandsMap().entries()) {
+			for (Entity entity : tagged) {
+				Tags tags = Mappers.tags.get(entity);
+				if (tags.contains(e.key, false)) {
+					entity.add(e.value);
+					break;
+				}
+			}
+		}
+		data.getCommandsMap().clear();
+	}
+
+	public int level = 1;
+
+	public void restartLevel(){
+		loadLevel(level + "");
+	}
+
+	public void levelCompleted() {
+		level++;
+		loadLevel(level + "");
+	}
 }

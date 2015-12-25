@@ -1,6 +1,7 @@
 package com.anserran.lis.systems;
 
 import com.anserran.lis.components.AngularVelocity;
+import com.anserran.lis.components.Behaviour;
 import com.anserran.lis.components.Collider;
 import com.anserran.lis.components.Origin;
 import com.anserran.lis.components.Position;
@@ -21,4 +22,5 @@ public interface Mappers {
     ComponentMapper<Interpolate> interpolate = ComponentMapper.getFor(Interpolate.class);
     ComponentMapper<Tags> tags = ComponentMapper.getFor(Tags.class);
     ComponentMapper<Commands> commands = ComponentMapper.getFor(Commands.class);
+	ComponentMapper<Behaviour> behaviour = ComponentMapper.getFor(Behaviour.class);
 }
