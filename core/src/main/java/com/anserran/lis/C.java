@@ -2,8 +2,11 @@ package com.anserran.lis;
 
 import com.badlogic.gdx.math.Interpolation;
 
-public class C {
-    public static final float THRUST_SPEED = 5;
-    public static final float THRUST_TIME = 2.1f;
-    public static final Interpolation THRUST_INTERPOLATION = Interpolation.pow3In;
+public interface C {
+    float THRUST_SPEED = 5;
+    float THRUST_TIME = 2.1f;
+    Interpolation THRUST_INTERPOLATION = Interpolation.pow3In;
+
+    String PATH_SKELETONS = "skeletons/";
+    String EXTENSION_SKELETONS = ".skel";
 }
