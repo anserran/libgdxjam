@@ -33,6 +33,15 @@ allprojects {
     }
 }
 
+
+project(":spine-libgdx") {
+    apply plugin: "java"
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
+}
+
 project(":desktop") {
     apply plugin: "java"
 
@@ -84,6 +93,7 @@ project(":core") {
 
 
     dependencies {
+        compile project(":spine-libgdx")
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"

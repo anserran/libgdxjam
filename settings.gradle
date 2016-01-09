@@ -1,1 +1,1 @@
-include 'desktop', 'android', 'html', 'core'
+include 'spine-libgdx', 'desktop', 'android', 'html', 'core'
