@@ -111,7 +111,7 @@ public class LevelLoader {
 
                     LoadRenderer loadRenderer = newComponent(LoadRenderer.class, components);
                     loadRenderer.type = LoadRenderer.Type.SKELETON;
-                    loadRenderer.name = "astronaut";
+                    loadRenderer.name = "astronaut/skeleton";
                 }
 
                 if ("exit".equals(type)) {

@@ -6,6 +6,7 @@ import com.anserran.lis.assets.Assets;
 import com.anserran.lis.components.LoadRenderer;
 import com.anserran.lis.components.groups.SkeletonGroup;
 import com.anserran.lis.systems.Mappers;
+import com.anserran.lis.ui.GameGrid;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -13,7 +14,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.esotericsoftware.spine.SkeletonData;
 
 public class LoadRenderSystem extends IteratingSystem implements Mappers {
@@ -22,9 +22,9 @@ public class LoadRenderSystem extends IteratingSystem implements Mappers {
 
     private Assets assets;
 
-    private Group root;
+    private GameGrid root;
 
-    public LoadRenderSystem(Assets assets, Group root) {
+    public LoadRenderSystem(Assets assets, GameGrid root) {
         super(Family.all(LoadRenderer.class).get());
         this.assets = assets;
         this.root = root;
@@ -51,7 +51,7 @@ public class LoadRenderSystem extends IteratingSystem implements Mappers {
     private <T extends Component> T createGroup(Entity entity, Class<T> clazz) {
         T group = engine.createComponent(clazz);
         entity.add(group);
-        root.addActor((Actor) group);
+        root.add((Actor) group);
         Utils.update((Actor) group, entity);
         return group;
     }

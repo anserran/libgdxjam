@@ -5,18 +5,27 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.AnimationStateData;
+import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonData;
 import com.esotericsoftware.spine.SkeletonRenderer;
 
 public class SkeletonGroup extends Group implements Component {
 
+    private SkeletonData skeletonData;
     private SkeletonRenderer skeletonRenderer = new SkeletonRenderer();
-    private com.esotericsoftware.spine.Skeleton skeleton;
+    private Skeleton skeleton;
     private AnimationState state;
 
     public void setData(SkeletonData skeletonData){
-        this.skeleton = new com.esotericsoftware.spine.Skeleton(skeletonData);
-        state = new AnimationState(new AnimationStateData(skeletonData));
+        this.skeletonData = skeletonData;
+        this.skeleton = new Skeleton(skeletonData);
+        AnimationStateData stateData = new AnimationStateData(skeletonData);
+        state = new AnimationState(stateData);
+        state.setAnimation(0, "float", true);
+    }
+
+    public void setAnimation(String animation){
+
     }
 
     @Override

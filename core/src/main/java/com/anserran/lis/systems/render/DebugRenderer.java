@@ -4,8 +4,7 @@ import com.anserran.lis.components.Collider;
 import com.anserran.lis.components.Rotation;
 import com.anserran.lis.systems.Mappers;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,7 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
-public class CollidersRenderSystem extends IteratingSystem implements Mappers, RenderSystem {
+public class DebugRenderer implements Mappers {
 
     private ShapeRenderer shapeRenderer;
 
@@ -27,19 +26,22 @@ public class CollidersRenderSystem extends IteratingSystem implements Mappers, R
 
     private static final Vector2 v = new Vector2();
 
-    public CollidersRenderSystem() {
-        super(Family.all(Collider.class).get());
+    private ImmutableArray<Entity> entities;
+
+    public DebugRenderer() {
         this.shapeRenderer = new ShapeRenderer();
         camera = new OrthographicCamera();
     }
 
-    @Override
+    public void setEntities(ImmutableArray<Entity> entities) {
+        this.entities = entities;
+    }
+
     public void setGridSize(int width, int height) {
         gridSize.set(width, height);
         updateCamera();
     }
 
-    @Override
     public void resize(int width, int height) {
         viewportSize.set(width, height);
         updateCamera();
@@ -55,8 +57,7 @@ public class CollidersRenderSystem extends IteratingSystem implements Mappers, R
         shapeRenderer.setTransformMatrix(transform);
     }
 
-    @Override
-    public void update(float deltaTime) {
+    public void render() {
         shapeRenderer.setColor(0.05f, 0.05f, 0.05f, 1.0f);
         shapeRenderer.begin(ShapeType.Line);
         for (int i = 0; i <= gridSize.x; i++) {
@@ -67,12 +68,13 @@ public class CollidersRenderSystem extends IteratingSystem implements Mappers, R
             shapeRenderer.line(0, j, 0, gridSize.x, j, 0);
         }
         shapeRenderer.setColor(Color.GREEN);
-        super.update(deltaTime);
+        for (Entity entity : entities) {
+            renderEntity(entity);
+        }
         shapeRenderer.end();
     }
 
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    protected void renderEntity(Entity entity) {
         Collider c = collider.get(entity);
         if (c != null) {
             if (c.circle) {
@@ -86,5 +88,9 @@ public class CollidersRenderSystem extends IteratingSystem implements Mappers, R
                 shapeRenderer.rect(c.pos.x, c.pos.y, c.size.x, c.size.y);
             }
         }
+    }
+
+    public void dispose() {
+        shapeRenderer.dispose();
     }
 }

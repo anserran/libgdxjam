@@ -26,7 +26,7 @@ public class Utils implements Mappers {
     public static void update(Actor actor, Entity entity) {
         if (position.has(entity)) {
             Position p = position.get(entity);
-            actor.setPosition(p.x, p.y);
+            actor.setPosition(p.x * C.SPRITE_SIZE, p.y * C.SPRITE_SIZE);
         }
 
         if (rotation.has(entity)) {
@@ -36,7 +36,7 @@ public class Utils implements Mappers {
 
         if (origin.has(entity)) {
             Origin o = origin.get(entity);
-            actor.setOrigin(o.x, o.y);
+            actor.setOrigin(o.x * C.SPRITE_SIZE, o.y * C.SPRITE_SIZE);
         }
     }
 }

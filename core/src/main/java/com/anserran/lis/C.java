@@ -9,4 +9,6 @@ public interface C {
 
     String PATH_SKELETONS = "skeletons/";
     String EXTENSION_SKELETONS = ".skel";
+
+    int SPRITE_SIZE = 480;
 }
