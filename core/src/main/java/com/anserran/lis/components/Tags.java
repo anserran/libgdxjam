@@ -6,8 +6,8 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class Tags extends Array<String> implements Component, Poolable {
 
-    @Override
-    public void reset() {
-        clear();
-    }
+	@Override
+	public void reset() {
+		clear();
+	}
 }

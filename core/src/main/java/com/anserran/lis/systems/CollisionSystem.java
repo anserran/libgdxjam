@@ -124,6 +124,9 @@ public class CollisionSystem extends EntitySystem implements Mappers {
 			case EXIT:
 				controller.levelCompleted();
 				break;
+			case WIRES:
+				controller.die(e1);
+				break;
 			}
 		}
 	}

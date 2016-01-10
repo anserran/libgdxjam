@@ -5,15 +5,15 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class AngularVelocity implements Component, Value, Poolable {
 
-    public float value;
+	public float value;
 
-    @Override
-    public void addValue(float value) {
-        this.value += value;
-    }
+	@Override
+	public void addValue(float value) {
+		this.value += value;
+	}
 
-    @Override
-    public void reset() {
-        value = 0;
-    }
+	@Override
+	public void reset() {
+		value = 0;
+	}
 }

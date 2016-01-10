@@ -8,8 +8,8 @@ import com.esotericsoftware.spine.SkeletonData;
 
 public class Assets extends AssetManager {
 
-    public Assets() {
-        FileHandleResolver resolver = new InternalFileHandleResolver();
-        setLoader(SkeletonData.class, new SkeletonLoader(resolver));
-    }
+	public Assets() {
+		FileHandleResolver resolver = new InternalFileHandleResolver();
+		setLoader(SkeletonData.class, new SkeletonLoader(resolver));
+	}
 }

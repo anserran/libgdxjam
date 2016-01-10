@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class Commands extends Array<Command> implements Component, Poolable {
 
-    @Override
-    public void reset() {
-        clear();
-    }
+	@Override
+	public void reset() {
+		clear();
+	}
 }

@@ -12,31 +12,34 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Utils implements Mappers {
 
-    public static PooledEngine engine;
+	public static PooledEngine engine;
 
-    public static Interpolate moveTo(float x, float y, float toX, float toY, float time, Interpolation interpolation) {
-        Interpolate interpolate = engine.createComponent(Interpolate.class);
-        interpolate.value.set(toX - x, toY - y);
-        interpolate.totalTime = time;
-        interpolate.interpolation = interpolation;
-        interpolate.component = Position.class;
-        return interpolate;
-    }
+	public static Interpolate moveTo(float x, float y, float toX, float toY,
+			float time, Interpolation interpolation) {
+		Interpolate interpolate = engine.createComponent(Interpolate.class);
+		interpolate.value.set(toX - x, toY - y);
+		interpolate.totalTime = time;
+		interpolate.interpolation = interpolation;
+		interpolate.component = Position.class;
+		return interpolate;
+	}
 
-    public static void update(Actor actor, Entity entity) {
-        if (position.has(entity)) {
-            Position p = position.get(entity);
-            actor.setPosition(Math.round(p.x * C.SPRITE_SIZE_SCALED), Math.round(p.y * C.SPRITE_SIZE_SCALED));
-        }
+	public static void update(Actor actor, Entity entity) {
+		if (position.has(entity)) {
+			Position p = position.get(entity);
+			actor.setPosition(Math.round(p.x * C.SPRITE_SIZE_SCALED),
+					Math.round(p.y * C.SPRITE_SIZE_SCALED));
+		}
 
-        if (rotation.has(entity)) {
-            Rotation r = rotation.get(entity);
-            actor.setRotation(r.value);
-        }
+		if (rotation.has(entity)) {
+			Rotation r = rotation.get(entity);
+			actor.setRotation(r.value);
+		}
 
-        if (origin.has(entity)) {
-            Origin o = origin.get(entity);
-            actor.setOrigin(o.x * C.SPRITE_SIZE_SCALED, o.y * C.SPRITE_SIZE_SCALED);
-        }
-    }
+		if (origin.has(entity)) {
+			Origin o = origin.get(entity);
+			actor.setOrigin(o.x * C.SPRITE_SIZE_SCALED, o.y
+					* C.SPRITE_SIZE_SCALED);
+		}
+	}
 }

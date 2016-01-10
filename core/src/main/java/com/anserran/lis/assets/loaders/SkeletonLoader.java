@@ -15,63 +15,63 @@ import com.esotericsoftware.spine.SkeletonData;
 import com.esotericsoftware.spine.SkeletonJson;
 
 public class SkeletonLoader extends
-        AsynchronousAssetLoader<SkeletonData, SkeletonAssetParameter> {
+		AsynchronousAssetLoader<SkeletonData, SkeletonAssetParameter> {
 
-    private String name;
+	private String name;
 
-    private boolean json;
+	private boolean json;
 
-    private SkeletonData skeletonData;
+	private SkeletonData skeletonData;
 
-    public SkeletonLoader(FileHandleResolver resolver) {
-        super(resolver);
-    }
+	public SkeletonLoader(FileHandleResolver resolver) {
+		super(resolver);
+	}
 
-    @Override
-    public Array<AssetDescriptor> getDependencies(String fileName,
-                                                  FileHandle file, SkeletonAssetParameter parameter) {
-        Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>();
-        name = file.path();
-        json = name.endsWith(".json");
-        name = name.substring(0, name.length() - 5);
+	@Override
+	public Array<AssetDescriptor> getDependencies(String fileName,
+			FileHandle file, SkeletonAssetParameter parameter) {
+		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>();
+		name = file.path();
+		json = name.endsWith(".json");
+		name = name.substring(0, name.length() - 5);
 
-        if (parameter == null || parameter.atlasName == null) {
-            dependencies.add(new AssetDescriptor(name + ".atlas",
-                    TextureAtlas.class));
-        } else {
-            dependencies.add(new AssetDescriptor(parameter.atlasName,
-                    TextureAtlas.class));
-        }
+		if (parameter == null || parameter.atlasName == null) {
+			dependencies.add(new AssetDescriptor(name + ".atlas",
+					TextureAtlas.class));
+		} else {
+			dependencies.add(new AssetDescriptor(parameter.atlasName,
+					TextureAtlas.class));
+		}
 
-        return dependencies;
-    }
+		return dependencies;
+	}
 
-    @Override
-    public void loadAsync(AssetManager manager, String fileName,
-                          FileHandle file, SkeletonAssetParameter parameter) {
-        TextureAtlas atlas = manager
-                .get(parameter == null || parameter.atlasName == null ? name + ".atlas" : parameter.atlasName, TextureAtlas.class);
-        if (json) {
-            SkeletonJson json = new SkeletonJson(atlas);
-            json.setScale(C.SPRITE_SCALE);
-            skeletonData = json.readSkeletonData(file);
-        } else {
-            SkeletonBinary binary = new SkeletonBinary(atlas);
-            binary.setScale(C.SPRITE_SCALE);
-            skeletonData = binary.readSkeletonData(file);
-        }
-    }
+	@Override
+	public void loadAsync(AssetManager manager, String fileName,
+			FileHandle file, SkeletonAssetParameter parameter) {
+		TextureAtlas atlas = manager.get(parameter == null
+				|| parameter.atlasName == null ? name + ".atlas"
+				: parameter.atlasName, TextureAtlas.class);
+		if (json) {
+			SkeletonJson json = new SkeletonJson(atlas);
+			json.setScale(C.SPRITE_SCALE);
+			skeletonData = json.readSkeletonData(file);
+		} else {
+			SkeletonBinary binary = new SkeletonBinary(atlas);
+			binary.setScale(C.SPRITE_SCALE);
+			skeletonData = binary.readSkeletonData(file);
+		}
+	}
 
-    @Override
-    public SkeletonData loadSync(AssetManager manager, String fileName,
-                                 FileHandle file, SkeletonAssetParameter parameter) {
-        return skeletonData;
-    }
+	@Override
+	public SkeletonData loadSync(AssetManager manager, String fileName,
+			FileHandle file, SkeletonAssetParameter parameter) {
+		return skeletonData;
+	}
 
-    public static class SkeletonAssetParameter extends
-            AssetLoaderParameters<SkeletonData> {
+	public static class SkeletonAssetParameter extends
+			AssetLoaderParameters<SkeletonData> {
 
-        public String atlasName;
-    }
+		public String atlasName;
+	}
 }
-

@@ -8,14 +8,14 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 public class VelocitySystem extends IteratingSystem implements Mappers {
-    public VelocitySystem() {
-        super(Family.all(Velocity.class, Position.class).get());
-    }
+	public VelocitySystem() {
+		super(Family.all(Velocity.class, Position.class).get());
+	}
 
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        Position p = position.get(entity);
-        Velocity v = velocity.get(entity);
-        p.add(v.x * deltaTime, v.y * deltaTime);
-    }
+	@Override
+	protected void processEntity(Entity entity, float deltaTime) {
+		Position p = position.get(entity);
+		Velocity v = velocity.get(entity);
+		p.add(v.x * deltaTime, v.y * deltaTime);
+	}
 }

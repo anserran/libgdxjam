@@ -34,135 +34,147 @@ import com.esotericsoftware.spine.SkeletonData;
 
 public class LifeInSpace extends ApplicationAdapter {
 
-    private PooledEngine engine;
-    private DebugRenderer renderSystem;
-    private LevelLoader loader;
-    private ImmutableArray<Entity> tagged;
-    private Data data;
-    private Assets assets;
-    private Stage stage;
+	private PooledEngine engine;
+	private DebugRenderer renderSystem;
+	private LevelLoader loader;
+	private ImmutableArray<Entity> tagged;
+	private Data data;
+	private Assets assets;
+	private Stage stage;
 
-    public int updates = 1;
-    private GameGrid grid;
-    private boolean debug;
+	public int updates = 1;
+	private GameGrid grid;
+	private boolean debug;
 
-    public Data getData() {
-        return data;
-    }
+	public Data getData() {
+		return data;
+	}
 
-    public Assets getAssets() {
-        return assets;
-    }
+	public Assets getAssets() {
+		return assets;
+	}
 
-    @Override
-    public void create() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        engine = new PooledEngine();
-        data = new Data(engine);
+	@Override
+	public void create() {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		engine = new PooledEngine();
+		data = new Data(engine);
 
-        assets = new Assets();
-        stage = new Stage(new ScreenViewport());
+		assets = new Assets();
+		stage = new Stage(new ScreenViewport());
 
-        Utils.engine = engine;
+		Utils.engine = engine;
 
-        engine.addSystem(new VelocitySystem());
-        engine.addSystem(new AngularVelocitySystem());
-        engine.addSystem(new CollisionSystem(this));
-        engine.addSystem(new InterpolationSystem());
-        engine.addSystem(new CommandsSystem());
+		engine.addSystem(new VelocitySystem());
+		engine.addSystem(new AngularVelocitySystem());
+		engine.addSystem(new CollisionSystem(this));
+		engine.addSystem(new InterpolationSystem());
+		engine.addSystem(new CommandsSystem());
 
-        grid = new GameGrid();
-        stage.getRoot().addActor(grid);
-        engine.addSystem(new LoadRenderSystem(assets, grid));
-        engine.addSystem(new StageSystem());
-        this.loader = new LevelLoader(engine);
+		grid = new GameGrid();
+		stage.getRoot().addActor(grid);
+		engine.addSystem(new LoadRenderSystem(assets, grid));
+		engine.addSystem(new StageSystem());
+		this.loader = new LevelLoader(engine);
 
-        renderSystem = new DebugRenderer();
-        renderSystem.setEntities(engine.getEntitiesFor(Family.all(Collider.class).get()));
+		renderSystem = new DebugRenderer();
+		renderSystem.setEntities(engine.getEntitiesFor(Family.all(
+				Collider.class).get()));
 
-        tagged = engine.getEntitiesFor(Family.all(Tags.class).get());
+		tagged = engine.getEntitiesFor(Family.all(Tags.class).get());
 
-        Gdx.input.setInputProcessor(new KeyboardInputProcessor(this));
-        loadLevel("1");
+		Gdx.input.setInputProcessor(new KeyboardInputProcessor(this));
+		loadLevel("1");
 
-        SkeletonAssetParameter parameter = new SkeletonAssetParameter();
-        parameter.atlasName = C.PATH_ATLAS;
-        assets.load(C.PATH_SKELETONS + "astronaut.skel", SkeletonData.class, parameter);
-        assets.finishLoading();
-    }
+		SkeletonAssetParameter parameter = new SkeletonAssetParameter();
+		parameter.atlasName = C.PATH_ATLAS;
+		assets.load(C.PATH_SKELETONS + "astronaut.skel", SkeletonData.class,
+				parameter);
+		assets.finishLoading();
+	}
 
-    @Override
-    public void render() {
-        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1.0f / 33f);
-        for (int i = 0; i < updates; i++) {
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            stage.act(delta);
-            engine.update(delta);
-        }
-        stage.draw();
-        if (debug) {
-            renderSystem.render();
-        }
-    }
+	@Override
+	public void render() {
+		float delta = Math.min(Gdx.graphics.getDeltaTime(), 1.0f / 33f);
+		for (int i = 0; i < updates; i++) {
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			stage.act(delta);
+			engine.update(delta);
+		}
+		stage.draw();
+		if (debug) {
+			renderSystem.render();
+		}
+	}
 
-    @Override
-    public void resize(int width, int height) {
-        renderSystem.resize(width, height);
-        grid.setBounds(0, 0, width, height);
-        stage.getViewport().update(width, height, true);
-    }
+	@Override
+	public void resize(int width, int height) {
+		renderSystem.resize(width, height);
+		grid.setBounds(0, 0, width, height);
+		stage.getViewport().update(width, height, true);
+	}
 
-    @Override
-    public void dispose() {
-        stage.dispose();
-        assets.dispose();
-        renderSystem.dispose();
-    }
+	@Override
+	public void dispose() {
+		stage.dispose();
+		assets.dispose();
+		renderSystem.dispose();
+	}
 
-    public void loadLevel(String levelId) {
-        engine.removeAllEntities();
-        LevelData levelData = loader.load(levelId);
-        renderSystem.setGridSize(levelData.width, levelData.height);
-        grid.setGridSize(levelData.width, levelData.height);
-        for (EntityData entityData : levelData.entities) {
-            Entity entity = engine.createEntity();
-            if (entityData.id != null) {
-                Tags tags = engine.createComponent(Tags.class);
-                tags.add(entityData.id);
-                entity.add(tags);
-            }
-            for (Component component : entityData.components) {
-                entity.add(component);
-            }
-            engine.addEntity(entity);
-        }
-    }
+	public void loadLevel(final String levelId) {
+		engine.removeAllEntities();
+		Gdx.app.postRunnable(new Runnable() {
+			@Override
+			public void run() {
+				LevelData levelData = loader.load(levelId);
+				renderSystem.setGridSize(levelData.width, levelData.height);
+				grid.setGridSize(levelData.width, levelData.height);
+				for (EntityData entityData : levelData.entities) {
+					Entity entity = engine.createEntity();
+					if (entityData.id != null) {
+						Tags tags = engine.createComponent(Tags.class);
+						tags.add(entityData.id);
+						entity.add(tags);
+					}
+					for (Component component : entityData.components) {
+						entity.add(component);
+					}
+					engine.addEntity(entity);
+				}
+			}
+		});
+	}
 
-    public void run() {
-        for (Entry<String, Commands> e : data.getCommandsMap().entries()) {
-            for (Entity entity : tagged) {
-                Tags tags = Mappers.tags.get(entity);
-                if (tags.contains(e.key, false)) {
-                    entity.add(e.value);
-                    break;
-                }
-            }
-        }
-        data.getCommandsMap().clear();
-    }
+	public void run() {
+		for (Entry<String, Commands> e : data.getCommandsMap().entries()) {
+			for (Entity entity : tagged) {
+				Tags tags = Mappers.tags.get(entity);
+				if (tags.contains(e.key, false)) {
+					entity.add(e.value);
+					break;
+				}
+			}
+		}
+		data.getCommandsMap().clear();
+	}
 
-    public int level = 1;
+	public int level = 1;
 
-    public void restartLevel() {
-        loadLevel(level + "");
-    }
+	public void restartLevel() {
+		loadLevel(level + "");
+	}
 
-    public void levelCompleted() {
-        level++;
-        loadLevel(level + "");
-    }
+	public void levelCompleted() {
+		level++;
+		loadLevel(level + "");
+	}
 
-    public void toggleDebug() {
-        debug = !debug;
-    }
+	public void die(Entity entity) {
+		restartLevel();
+	}
+
+	public void toggleDebug() {
+		debug = !debug;
+	}
+
 }
