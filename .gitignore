@@ -45,4 +45,7 @@ classes
 gradle
 war
 spine-libgdx
+png
+android/assets/scale*
+.lastmodified
 
