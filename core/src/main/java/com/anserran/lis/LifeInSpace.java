@@ -1,6 +1,7 @@
 package com.anserran.lis;
 
 import com.anserran.lis.assets.Assets;
+import com.anserran.lis.assets.loaders.SkeletonLoader.SkeletonAssetParameter;
 import com.anserran.lis.components.Collider;
 import com.anserran.lis.components.Tags;
 import com.anserran.lis.components.commands.Commands;
@@ -43,6 +44,7 @@ public class LifeInSpace extends ApplicationAdapter {
 
     public int updates = 1;
     private GameGrid grid;
+    private boolean debug;
 
     public Data getData() {
         return data;
@@ -82,7 +84,10 @@ public class LifeInSpace extends ApplicationAdapter {
 
         Gdx.input.setInputProcessor(new KeyboardInputProcessor(this));
         loadLevel("1");
-        assets.load(C.PATH_SKELETONS + "astronaut/skeleton.skel", SkeletonData.class);
+
+        SkeletonAssetParameter parameter = new SkeletonAssetParameter();
+        parameter.atlasName = C.PATH_ATLAS;
+        assets.load(C.PATH_SKELETONS + "astronaut.skel", SkeletonData.class, parameter);
         assets.finishLoading();
     }
 
@@ -95,7 +100,9 @@ public class LifeInSpace extends ApplicationAdapter {
             engine.update(delta);
         }
         stage.draw();
-        renderSystem.render();
+        if (debug) {
+            renderSystem.render();
+        }
     }
 
     @Override
@@ -153,5 +160,9 @@ public class LifeInSpace extends ApplicationAdapter {
     public void levelCompleted() {
         level++;
         loadLevel(level + "");
+    }
+
+    public void toggleDebug() {
+        debug = !debug;
     }
 }

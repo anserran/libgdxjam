@@ -20,5 +20,9 @@ public class StageSystem extends IteratingSystem implements Mappers {
         if (skeleton.has(entity)) {
             Utils.update(skeleton.get(entity), entity);
         }
+
+        if (tiles.has(entity)) {
+            Utils.update(skeleton.get(entity), entity);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.anserran.lis.assets.loaders;
 
+import com.anserran.lis.C;
 import com.anserran.lis.assets.loaders.SkeletonLoader.SkeletonAssetParameter;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -34,8 +35,13 @@ public class SkeletonLoader extends
         json = name.endsWith(".json");
         name = name.substring(0, name.length() - 5);
 
-        dependencies.add(new AssetDescriptor(name + ".atlas",
-                TextureAtlas.class));
+        if (parameter == null || parameter.atlasName == null) {
+            dependencies.add(new AssetDescriptor(name + ".atlas",
+                    TextureAtlas.class));
+        } else {
+            dependencies.add(new AssetDescriptor(parameter.atlasName,
+                    TextureAtlas.class));
+        }
 
         return dependencies;
     }
@@ -44,12 +50,15 @@ public class SkeletonLoader extends
     public void loadAsync(AssetManager manager, String fileName,
                           FileHandle file, SkeletonAssetParameter parameter) {
         TextureAtlas atlas = manager
-                .get(name + ".atlas", TextureAtlas.class);
+                .get(parameter == null || parameter.atlasName == null ? name + ".atlas" : parameter.atlasName, TextureAtlas.class);
         if (json) {
-            skeletonData = new SkeletonJson(atlas)
-                    .readSkeletonData(file);
+            SkeletonJson json = new SkeletonJson(atlas);
+            json.setScale(C.SPRITE_SCALE);
+            skeletonData = json.readSkeletonData(file);
         } else {
-            skeletonData = new SkeletonBinary(atlas).readSkeletonData(file);
+            SkeletonBinary binary = new SkeletonBinary(atlas);
+            binary.setScale(C.SPRITE_SCALE);
+            skeletonData = binary.readSkeletonData(file);
         }
     }
 
@@ -61,6 +70,8 @@ public class SkeletonLoader extends
 
     public static class SkeletonAssetParameter extends
             AssetLoaderParameters<SkeletonData> {
+
+        public String atlasName;
     }
 }
 

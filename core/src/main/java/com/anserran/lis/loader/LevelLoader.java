@@ -3,10 +3,11 @@ package com.anserran.lis.loader;
 import com.anserran.lis.components.Behaviour;
 import com.anserran.lis.components.Behaviour.Type;
 import com.anserran.lis.components.Collider;
+import com.anserran.lis.components.LoadRenderer;
 import com.anserran.lis.components.Origin;
 import com.anserran.lis.components.Position;
-import com.anserran.lis.components.LoadRenderer;
 import com.anserran.lis.components.Rotation;
+import com.anserran.lis.components.Size;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
@@ -87,6 +88,9 @@ public class LevelLoader {
                     collider.setSize(jsonData.getFloat("w"),
                             jsonData.getFloat("h"));
                     collider.dynamic = false;
+
+                    Size size = newComponent(Size.class, components);
+                    size.set(collider.size);
                 }
 
                 if (circle.contains(type, false)) {
@@ -108,14 +112,15 @@ public class LevelLoader {
                     origin.set(0.5f, 0.5f);
                     entityData.id = "a";
                     behaviour(Type.ASTRONAUT, components);
-
-                    LoadRenderer loadRenderer = newComponent(LoadRenderer.class, components);
-                    loadRenderer.type = LoadRenderer.Type.SKELETON;
-                    loadRenderer.name = "astronaut/skeleton";
+                    renderer(LoadRenderer.Type.SKELETON, "astronaut", components);
                 }
 
                 if ("exit".equals(type)) {
                     behaviour(Type.EXIT, components);
+                }
+
+                if ("wall".equals(type)) {
+                    renderer(LoadRenderer.Type.TILES, "ship_wall", components);
                 }
 
                 entityData.components = components;
@@ -135,6 +140,12 @@ public class LevelLoader {
         private void behaviour(Type type, Array<Component> components) {
             Behaviour behaviour = newComponent(Behaviour.class, components);
             behaviour.type = type;
+        }
+
+        private void renderer(LoadRenderer.Type type, String name, Array<Component> components) {
+            LoadRenderer loadRenderer = newComponent(LoadRenderer.class, components);
+            loadRenderer.type = type;
+            loadRenderer.name = name;
         }
     }
 
